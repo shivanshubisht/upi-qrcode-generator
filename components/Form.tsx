@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import QRCode from 'qrcode';
-// import QRCode from 'qrcode.react';
+import Image from 'next/image';
 
 const Form = () => {
   const merchant = useRef<HTMLInputElement>(null);
@@ -38,7 +38,7 @@ const Form = () => {
         qrcode = `upi://pay?pa=${account.current?.value}@${ifsc.current?.value}.ifsc.npci&pn=${merchant.current?.value}&am=${amount.current?.value}&tn=${descriptionConcat}&cu=${currency.current?.value}`;
         break;
       case 'aadhaar':
-        qrcode: `upi://pay?pa=${aadhaar.current?.value}@aadhaar.npci&pn=${merchant.current?.value}&am=${amount.current?.value}&tn=${descriptionConcat}&cu=${currency.current?.value}`;
+        qrcode = `upi://pay?pa=${aadhaar.current?.value}@aadhaar.npci&pn=${merchant.current?.value}&am=${amount.current?.value}&tn=${descriptionConcat}&cu=${currency.current?.value}`;
         break;
       case 'mobile':
         qrcode = `upi://pay?pa=${mobile.current?.value}@mobile.npci&pn=${merchant.current?.value}&am=${amount.current?.value}&tn=${descriptionConcat}&cu=${currency.current?.value}`;
@@ -46,7 +46,7 @@ const Form = () => {
       default:
         break;
     }
-    console.log(qrcode);
+    // console.log(qrcode);
     // console.log(paymentType.current?.value);
     // image.current = await QRCode.toDataURL(qrcode);
     // console.log(image.current);
@@ -55,7 +55,11 @@ const Form = () => {
 
   return (
     <div className='flex flex-wrap justify-center md:flex-nowrap gap-8 w-full'>
-      <form onSubmit={generateQRCode} className='grid gap-2 w-full max-w-sm'>
+      <form
+        onChange={generateQRCode}
+        onSubmit={generateQRCode}
+        className='grid gap-2 w-full max-w-sm'
+      >
         <input
           type='text'
           placeholder='Merchant / Payee Name'
@@ -103,6 +107,16 @@ const Form = () => {
                     type='text'
                     placeholder='Aadhaar Number'
                     ref={aadhaar}
+                    className='bg-black p-2 rounded outline-none border-black border-2 focus:border-white transition duration-300 ease-in-out'
+                  />
+                );
+                break;
+              case 'mobile':
+                setInput(
+                  <input
+                    type='text'
+                    placeholder='Mobile Number'
+                    ref={mobile}
                     className='bg-black p-2 rounded outline-none border-black border-2 focus:border-white transition duration-300 ease-in-out'
                   />
                 );
@@ -179,13 +193,14 @@ const Form = () => {
         >
           Generate QR Code
         </button>
-        {/* <QRCode value={image} size={300} /> */}
       </form>
-      <img
+      <Image
         src={image ? image : defaultImage}
         // src={image}
         alt='QR code'
-        className='w-96 h-96 object-contain'
+        width={400}
+        height={400}
+        className='object-contain invert'
       />
     </div>
   );
